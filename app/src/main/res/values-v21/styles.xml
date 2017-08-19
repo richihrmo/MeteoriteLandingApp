@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:colorBackground">@android:color/background_light</item>
+    <item name="android:statusBarColor">?android:attr/colorForeground</item>
+    <item name="android:textColorPrimaryInverse">@color/common_google_signin_btn_text_dark_focused
+    </item>
+    <item name="android:textColorSecondary">@color/common_google_signin_btn_text_dark_focused</item>
+    <item name="android:textColorPrimary">@color/common_google_signin_btn_text_dark_focused</item>
+  </style>
+</resources>
