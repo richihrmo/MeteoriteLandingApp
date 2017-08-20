@@ -53,7 +53,8 @@ public class MyAdapter extends BaseAdapter {
     mass.setText(meteorite.getMass() + "g");
 
     TextView year = (TextView) convertView.findViewById(R.id.item_year);
-    year.setText(meteorite.getYear());
+    String format = meteorite.getYear().substring(0,4);
+    year.setText(format);
 
     return convertView;
   }

@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }, new ErrorListener() {
       @Override
       public void onErrorResponse(VolleyError error) {
-        Toast.makeText(MainActivity.this, "fail", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
       }
     });
     queue.add(stringRequest);
@@ -146,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
   public class CustomComparator implements Comparator<Meteorite> {
     @Override
     public int compare(Meteorite o1, Meteorite o2) {
-      System.out.println(Integer.valueOf(o2.getMass()).compareTo(Integer.valueOf(o1.getMass())));
       return Integer.valueOf(o2.getMass()).compareTo(Integer.valueOf(o1.getMass()));
     }
   }
