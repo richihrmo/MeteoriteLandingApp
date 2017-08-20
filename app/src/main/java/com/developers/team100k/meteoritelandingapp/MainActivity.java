@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 //    Type type = new TypeToken<List<Meteorite>>(){}.getType();
 //    meteorites = gson.fromJson(json, type);
     meteorites = getList(Meteorite[].class, json);
-//    Collections.sort(meteorites, new CustomComparator());
+    Collections.sort(meteorites, new CustomComparator());
   }
 
   public static final <T> List<T> getList(final Class<T[]> clazz, final String json)
@@ -147,9 +147,13 @@ public class MainActivity extends AppCompatActivity {
   public class CustomComparator implements Comparator<Meteorite> {
     @Override
     public int compare(Meteorite o1, Meteorite o2) {
-      if (o1.getMass() == null || o2.getMass() == null)
+      if (o1.getMass() == null && o2.getMass() == null)
         return 0;
-      return Integer.valueOf(o2.getMass()).compareTo(Integer.valueOf(o1.getMass()));
+      if (o1.getMass() == null && o2.getMass() != null)
+        return 1;
+      if (o1.getMass() != null && o2.getMass() == null)
+        return -1;
+      return Float.valueOf(o2.getMass()).compareTo(Float.valueOf(o1.getMass()));
     }
   }
 
