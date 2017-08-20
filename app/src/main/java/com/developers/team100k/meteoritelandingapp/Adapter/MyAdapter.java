@@ -50,11 +50,12 @@ public class MyAdapter extends BaseAdapter {
     name.setText(meteorite.getName());
 
     TextView mass = (TextView) convertView.findViewById(R.id.item_mass);
-    mass.setText(meteorite.getMass() + "g");
+    if (meteorite.getMass() == null) mass.setText("Not specified");
+    else mass.setText(meteorite.getMass() + "g");
 
     TextView year = (TextView) convertView.findViewById(R.id.item_year);
-    String format = meteorite.getYear().substring(0,4);
-    year.setText(format);
+    if (meteorite.getYear() == null) year.setText("Not specified");
+    else year.setText(meteorite.getYear().substring(0,4));
 
     return convertView;
   }

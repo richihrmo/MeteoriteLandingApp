@@ -30,12 +30,13 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-  private static String URL = "https://data.nasa.gov/resource/y77d-th95.json?$$app_token=VMuBlcIIY8sM83yXAD2j4KXQV";
+  private static String URL = "https://data.nasa.gov/resource/y77d-th95.json?$where=year%20%3E%20%272011-01-01T12:00:00%27&$$app_token=VMuBlcIIY8sM83yXAD2j4KXQV";
 
   private String filename = "tempData";
 
@@ -146,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
   public class CustomComparator implements Comparator<Meteorite> {
     @Override
     public int compare(Meteorite o1, Meteorite o2) {
+      if (o1.getMass() == null || o2.getMass() == null)
+        return 0;
       return Integer.valueOf(o2.getMass()).compareTo(Integer.valueOf(o1.getMass()));
     }
   }

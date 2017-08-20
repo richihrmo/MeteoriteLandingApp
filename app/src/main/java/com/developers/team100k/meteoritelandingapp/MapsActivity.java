@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +31,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     setContentView(R.layout.activity_maps);
 
     Toolbar mapsToolbar = (Toolbar) findViewById(R.id.mapstoolbar);
+    mapsToolbar.setNavigationIcon(R.drawable.back);
+    mapsToolbar.setNavigationOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     // Obtain the SupportMapFragment and get notified when the map is ready to be used.
     SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
