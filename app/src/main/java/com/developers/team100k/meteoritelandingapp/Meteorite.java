@@ -17,7 +17,7 @@ public class Meteorite {
     private String id;
     @SerializedName("mass")
     @Expose
-    private String mass = "0";
+    private String mass;
     @SerializedName("name")
     @Expose
     private String name;

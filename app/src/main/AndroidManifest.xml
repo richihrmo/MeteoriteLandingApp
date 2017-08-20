@@ -44,4 +44,10 @@
     </activity>
   </application>
 
+  <service
+    android:name=".TestJobService"
+    android:label="Word service"
+    android:permission="android.permission.BIND_JOB_SERVICE" >
+  </service>
+
 </manifest>

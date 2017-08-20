@@ -20,14 +20,15 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.developers.team100k.meteoritelandingapp.Adapter.MyAdapter;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
   private String filename = "tempData";
 
   private String json;
-  private Gson gson = new Gson();
   private List<Meteorite> meteorites = new ArrayList<>();
 
   private ListView mListView;
@@ -78,10 +78,14 @@ public class MainActivity extends AppCompatActivity {
     });
   }
 
+  /**
+   * Convert JSON data to Java Collection using GSON
+   * @param json
+   */
   public void JsonToCollection(String json){
-//    Type type = new TypeToken<List<Meteorite>>(){}.getType();
-//    meteorites = gson.fromJson(json, type);
-    meteorites = getList(Meteorite[].class, json);
+    Type type = new TypeToken<List<Meteorite>>(){}.getType();
+    meteorites = new Gson().fromJson(json, type);
+//    meteorites = getList(Meteorite[].class, json);
     Collections.sort(meteorites, new CustomComparator());
   }
 
@@ -92,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
     return Arrays.asList(jsonToObject);
   }
 
+  /**
+   * Get JSON data from NASA API URL
+   */
   public void JsonFromURL(){
     RequestQueue queue = Volley.newRequestQueue(this);
     StringRequest stringRequest = new StringRequest(URL, new Listener<String>() {
@@ -113,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
     queue.add(stringRequest);
   }
 
+  /**
+   *  write JSON data to file for offline access to data
+   */
   public void writeToFile(){
     FileOutputStream outputStream;
     try {
@@ -123,7 +133,9 @@ public class MainActivity extends AppCompatActivity {
       e.printStackTrace();
     }
   }
-
+  /**
+   *  read JSON data from file for offline access to data when internet is not available
+   */
   public String read_file(Context context, String filename) {
     try {
       FileInputStream fis = context.openFileInput(filename);
@@ -157,6 +169,10 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * check whether there is Internet connection or not
+   * @return boolean value
+   */
   public boolean isOnline() {
     ConnectivityManager cm =
         (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
