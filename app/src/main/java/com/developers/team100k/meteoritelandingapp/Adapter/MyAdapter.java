@@ -8,7 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.developers.team100k.meteoritelandingapp.Meteorite;
 import com.developers.team100k.meteoritelandingapp.R;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Richard Hrmo.
@@ -41,21 +43,27 @@ public class MyAdapter extends BaseAdapter {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
+    ViewHolderItem viewHolder;
+
     if (convertView == null) {
       convertView = LayoutInflater.from(context).inflate(R.layout.listview_layout, parent, false);
+
+      viewHolder = new ViewHolderItem();
+      viewHolder.name = (TextView) convertView.findViewById(R.id.item_name);
+      viewHolder.mass = (TextView) convertView.findViewById(R.id.item_mass);
+      viewHolder.year = (TextView) convertView.findViewById(R.id.item_year);
+
+      convertView.setTag(viewHolder);
+    } else {
+      viewHolder = (ViewHolderItem) convertView.getTag();
     }
 
     Meteorite meteorite = getItem(position);
-    TextView name = (TextView) convertView.findViewById(R.id.item_name);
-    name.setText(meteorite.getName());
-
-    TextView mass = (TextView) convertView.findViewById(R.id.item_mass);
-    if (meteorite.getMass() == null) mass.setText("Not specified");
-    else mass.setText(meteorite.getMass() + "g");
-
-    TextView year = (TextView) convertView.findViewById(R.id.item_year);
-    if (meteorite.getYear() == null) year.setText("Not specified");
-    else year.setText(meteorite.getYear().substring(0,4));
+    if (meteorite != null){
+      viewHolder.name.setText(meteorite.getName());
+      viewHolder.mass.setText(meteorite.getMass() + "g");
+      viewHolder.year.setText(meteorite.getYear().substring(0,4));
+    }
 
     return convertView;
   }

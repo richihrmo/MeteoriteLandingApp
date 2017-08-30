@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,8 +57,12 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     toolbar.setTitle("Meteorite Landings");
 
+//    Toast.makeText(this, String.format("%.2f", "15960.12243453"), Toast.LENGTH_LONG);
+
     json = read_file(this, filename);
-    JsonToCollection(json);
+    if (json.isEmpty()){
+      if (!isOnline()) Toast.makeText(this, "Please connect to the Internet", Toast.LENGTH_LONG).show();
+    } else JsonToCollection(json);
 
     if (isOnline()){
       JsonFromURL();
