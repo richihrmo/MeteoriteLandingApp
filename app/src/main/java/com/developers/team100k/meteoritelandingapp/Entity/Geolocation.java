@@ -1,5 +1,5 @@
 
-package com.developers.team100k.meteoritelandingapp;
+package com.developers.team100k.meteoritelandingapp.Entity;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

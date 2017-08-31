@@ -6,11 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.developers.team100k.meteoritelandingapp.Meteorite;
+import com.developers.team100k.meteoritelandingapp.Entity.Meteorite;
 import com.developers.team100k.meteoritelandingapp.R;
-import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Richard Hrmo.

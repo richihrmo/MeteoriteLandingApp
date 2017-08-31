@@ -1,5 +1,5 @@
 
-package com.developers.team100k.meteoritelandingapp;
+package com.developers.team100k.meteoritelandingapp.Entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
