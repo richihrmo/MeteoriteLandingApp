@@ -41,15 +41,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class MainActivity extends AppCompatActivity {
 
   private static String URL = "https://data.nasa.gov/resource/y77d-th95.json?$where=year%20%3E%20%272011-01-01T12:00:00%27&$$app_token=VMuBlcIIY8sM83yXAD2j4KXQV";
+  private EventBus eventBus;
 
   private List<Meteorite> meteorites = new ArrayList<>();
 
   private ListView mListView;
   private MyAdapter adapter;
+  private DataHandler dataHandler;
+  private ProgressDialog progress;
 
 
   @Override
@@ -61,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
     toolbar.setTitle("Meteorite Landings");
     setSupportActionBar(toolbar);
 
-    ProgressDialog progress = new ProgressDialog(this);
-    progress.setTitle("Loading");
-    progress.setMessage("Wait while loading...");
+    progress = new ProgressDialog(this);
+    progress.setTitle("Loading data");
+    progress.setMessage("Please wait...");
     progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
     adapter = new MyAdapter(MainActivity.this, meteorites);
@@ -80,12 +85,21 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    DataParser dataParser = new DataParser(this, URL, adapter, mListView, progress);
+    eventBus = EventBus.getDefault();
+    eventBus.register(this);
+
+    dataHandler = new DataHandler(this, URL, adapter, mListView, progress);
+  }
+
+  @Subscribe
+  public void onEvent(String response){
+    dataHandler.refresh();
+    progress.dismiss();
+    Toast.makeText(this, "jej", Toast.LENGTH_LONG).show();
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.item, menu);
     return true;
   }
@@ -96,5 +110,11 @@ public class MainActivity extends AppCompatActivity {
       this.recreate();
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    eventBus.unregister(this);
   }
 }

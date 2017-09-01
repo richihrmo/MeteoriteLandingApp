@@ -1,10 +1,8 @@
 package com.developers.team100k.meteoritelandingapp;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.ListView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response.ErrorListener;
@@ -12,7 +10,6 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.developers.team100k.meteoritelandingapp.Adapter.MyAdapter;
 import com.developers.team100k.meteoritelandingapp.Entity.Meteorite;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,37 +24,36 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Richard Hrmo.
  */
-
 public class DataParser {
-
 
   private Context mContext;
   private String URL;
+  private EventBus eventBus;
   private String json;
   private static String filename = "tempData";
+
+  public List<Meteorite> getMeteorites() {
+    return meteorites;
+  }
+
   private List<Meteorite> meteorites;
-  private MyAdapter adapter;
-  private ListView mListView;
-  private ProgressDialog progress;
 
-
-  public DataParser(Context context, String URL, MyAdapter adapter, ListView mListView, ProgressDialog progress){
+  public DataParser(Context context, String URL){
     this.mContext = context;
     this.URL = URL;
-    this.adapter = adapter;
-    this.mListView = mListView;
-    this.progress = progress;
+    eventBus = EventBus.getDefault();
     init();
   }
 
   public void init(){
-    json = read_file(mContext, filename);
-    if (!json.isEmpty()) JsonToCollection(json);
-    if (isOnline()) JsonFromURL();
+    json = readFile(mContext, filename);
+    if (!json.isEmpty()) jsonToCollection(json);
+    if (isOnline()) jsonFromURL();
     if (json.isEmpty() && !isOnline()) Toast.makeText(mContext, "No data \nConnect to Internet and press refresh", Toast.LENGTH_LONG).show();
   }
 
@@ -65,26 +61,25 @@ public class DataParser {
    * Convert JSON data to Java Collection using GSON
    * @param json
    */
-  public void JsonToCollection(String json){
+  public void jsonToCollection(String json){
     Type type = new TypeToken<List<Meteorite>>(){}.getType();
     meteorites = new Gson().fromJson(json, type);
     Collections.sort(meteorites, new CustomComparator());
-    refresh();
+    eventBus.post(json);
   }
 
   /**
    * Get JSON data from NASA API URL
    */
-  public void JsonFromURL(){
-    progress.show();
+  public void jsonFromURL(){
     RequestQueue queue = Volley.newRequestQueue(mContext);
     StringRequest stringRequest = new StringRequest(URL, new Listener<String>() {
       @Override
       public void onResponse(String response) {
         json = response;
         writeToFile(mContext);
-        JsonToCollection(json);
-        progress.dismiss();
+        jsonToCollection(json);
+        eventBus.post(json);
       }
     }, new ErrorListener() {
       @Override
@@ -111,7 +106,7 @@ public class DataParser {
   /**
    *  read JSON data from file for offline access to data when internet is not available
    */
-  public String read_file(Context context, String filename) {
+  public String readFile(Context context, String filename) {
     try {
       FileInputStream fis = context.openFileInput(filename);
       InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
@@ -154,12 +149,6 @@ public class DataParser {
         (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo netInfo = cm.getActiveNetworkInfo();
     return netInfo != null && netInfo.isConnectedOrConnecting();
-  }
-
-  public void refresh(){
-    adapter.setList(meteorites);
-    mListView.setAdapter(adapter);
-    adapter.notifyDataSetChanged();
   }
 
 }
