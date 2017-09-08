@@ -6,22 +6,16 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.developers.team100k.meteoritelandingapp.Adapter.MyAdapter;
 import com.developers.team100k.meteoritelandingapp.Entity.Meteorite;
-import java.util.ArrayList;
 import java.util.List;
-import org.greenrobot.eventbus.EventBus;
 
 /**
- * Created by Richard Hrmo.
+ * Data handling class
  */
 
 public class DataHandler {
 
   private Context mContext;
   private String URL;
-  private EventBus mEventBus;
-  private String json;
-  private static String filename = "tempData";
-  private List<Meteorite> meteorites = new ArrayList<>();
   private MyAdapter adapter;
   private ListView mListView;
   private ProgressDialog progress;
@@ -38,24 +32,27 @@ public class DataHandler {
   }
 
   public void init(){
-    mEventBus = EventBus.getDefault();
     mDataParser = new DataParser(mContext, URL);
 
-    json = mDataParser.readFile(mContext, filename);
+    String json = mDataParser.getJson();
     if (!json.isEmpty()) mDataParser.jsonToCollection(json);
-    if (mDataParser.isOnline()) {
-      mDataParser.jsonFromURL();
-      progress.show();
-    }
+    downloadRefresh();
     if (json.isEmpty() && !mDataParser.isOnline()) Toast.makeText(mContext, "No data \nConnect to Internet and press refresh", Toast.LENGTH_LONG).show();
   }
 
 
-  public void refresh(){
-    meteorites = mDataParser.getMeteorites();
+  public void listRefresh(){
+    List<Meteorite> meteorites = mDataParser.getMeteorites();
     adapter.setList(meteorites);
     mListView.setAdapter(adapter);
     adapter.notifyDataSetChanged();
+  }
+
+  public void downloadRefresh(){
+    if (mDataParser.isOnline()){
+      mDataParser.jsonFromURL();
+      progress.show();
+    }
   }
 
 }

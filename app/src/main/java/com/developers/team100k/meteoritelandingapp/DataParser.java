@@ -27,7 +27,8 @@ import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 
 /**
- * Created by Richard Hrmo.
+ * Data parsing class
+ * Fn: Get data from URL, Create collection from data, R/W to File
  */
 public class DataParser {
 
@@ -36,25 +37,14 @@ public class DataParser {
   private EventBus eventBus;
   private String json;
   private static String filename = "tempData";
-
-  public List<Meteorite> getMeteorites() {
-    return meteorites;
-  }
-
   private List<Meteorite> meteorites;
 
   public DataParser(Context context, String URL){
     this.mContext = context;
     this.URL = URL;
     eventBus = EventBus.getDefault();
-    init();
-  }
-
-  public void init(){
     json = readFile(mContext, filename);
-    if (!json.isEmpty()) jsonToCollection(json);
-    if (isOnline()) jsonFromURL();
-    if (json.isEmpty() && !isOnline()) Toast.makeText(mContext, "No data \nConnect to Internet and press refresh", Toast.LENGTH_LONG).show();
+
   }
 
   /**
@@ -65,7 +55,7 @@ public class DataParser {
     Type type = new TypeToken<List<Meteorite>>(){}.getType();
     meteorites = new Gson().fromJson(json, type);
     Collections.sort(meteorites, new CustomComparator());
-    eventBus.post(json);
+    eventBus.post("refresh");
   }
 
   /**
@@ -79,7 +69,6 @@ public class DataParser {
         json = response;
         writeToFile(mContext);
         jsonToCollection(json);
-        eventBus.post(json);
       }
     }, new ErrorListener() {
       @Override
@@ -150,5 +139,14 @@ public class DataParser {
     NetworkInfo netInfo = cm.getActiveNetworkInfo();
     return netInfo != null && netInfo.isConnectedOrConnecting();
   }
+
+  public String getJson() {
+    return json;
+  }
+
+  public List<Meteorite> getMeteorites() {
+    return meteorites;
+  }
+
 
 }
