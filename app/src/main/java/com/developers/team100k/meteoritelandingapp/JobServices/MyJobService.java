@@ -16,13 +16,11 @@ public class MyJobService extends JobService {
   @Override
   public boolean onStartJob(JobParameters job) {
     mEventBus.post("download");
-    Toast.makeText(getBaseContext(), "job started", Toast.LENGTH_LONG).show();
     return false;
   }
 
   @Override
   public boolean onStopJob(JobParameters job) {
-    Toast.makeText(getBaseContext(), "job stopped", Toast.LENGTH_SHORT).show();
     return false;
   }
 }

@@ -43,7 +43,10 @@
       android:name=".MapsActivity">
     </activity>
     <service android:name=".JobServices.MyJobService"/>
-  </application>
+      <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="83d675f07ad4841da966725cf48bcc6b1241cb61" />
+    </application>
 
   <service
     android:exported="false"

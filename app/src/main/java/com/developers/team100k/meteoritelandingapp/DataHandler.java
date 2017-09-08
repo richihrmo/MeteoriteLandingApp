@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Data handling class
+ * Methods for Activity refresh and Data refresh
  */
 
 public class DataHandler {
@@ -19,6 +20,10 @@ public class DataHandler {
   private MyAdapter adapter;
   private ListView mListView;
   private ProgressDialog progress;
+
+  public DataParser getDataParser() {
+    return mDataParser;
+  }
 
   private DataParser mDataParser;
 

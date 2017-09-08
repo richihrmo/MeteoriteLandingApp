@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.crashlytics.android.Crashlytics;
 import com.developers.team100k.meteoritelandingapp.Adapter.MyAdapter;
 import com.developers.team100k.meteoritelandingapp.Entity.Meteorite;
 import com.developers.team100k.meteoritelandingapp.JobServices.MyJobService;
@@ -21,6 +22,7 @@ import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
+import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -40,8 +42,16 @@ public class MainActivity extends AppCompatActivity {
 
 
   @Override
+  protected void onStart() {
+    super.onStart();
+    eventBus = EventBus.getDefault();
+    eventBus.register(this);
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Fabric.with(this, new Crashlytics());
     setContentView(R.layout.activity_main);
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,9 +78,8 @@ public class MainActivity extends AppCompatActivity {
     });
 
     dataHandler = new DataHandler(this, URL, adapter, mListView, progress);
+    meteorites = dataHandler.getDataParser().getMeteorites();
 
-    eventBus = EventBus.getDefault();
-    eventBus.register(this);
     // job scheduler
     dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(MainActivity.this));
     Job job = dispatcher.newJobBuilder()
@@ -88,12 +97,10 @@ public class MainActivity extends AppCompatActivity {
   public void onEvent(String response){
     if (response.equals("download")){
       dataHandler.downloadRefresh();
-      Toast.makeText(this, "download", Toast.LENGTH_LONG).show();
     } else {
       if (response.equals("refresh")){
         dataHandler.listRefresh();
         progress.dismiss();
-        Toast.makeText(this, "refresh", Toast.LENGTH_LONG).show();
       }
     }
   }
