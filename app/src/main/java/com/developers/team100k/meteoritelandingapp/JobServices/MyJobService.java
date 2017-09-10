@@ -1,6 +1,5 @@
 package com.developers.team100k.meteoritelandingapp.JobServices;
 
-import android.widget.Toast;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 import org.greenrobot.eventbus.EventBus;

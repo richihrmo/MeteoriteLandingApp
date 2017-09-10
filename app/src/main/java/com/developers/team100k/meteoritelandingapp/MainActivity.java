@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     eventBus.register(this);
   }
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -75,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     });
 
     dataHandler = new DataHandler(this, URL, adapter, mListView, progress);
-//    meteorites = dataHandler.getDataParser().getMeteorites();
 
     // job scheduler
     dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(MainActivity.this));
@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         .setTrigger(Trigger.executionWindow(86400000,86400010))
         .build();
     dispatcher.mustSchedule(job);
-    
   }
 
   // eventbus onEvent listener
