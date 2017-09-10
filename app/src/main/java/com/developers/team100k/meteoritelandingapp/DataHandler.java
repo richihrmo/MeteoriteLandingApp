@@ -58,6 +58,7 @@ public class DataHandler {
       mDataParser.jsonFromURL();
       progress.show();
     }
+
   }
 
 }

@@ -16,11 +16,9 @@ import com.crashlytics.android.Crashlytics;
 import com.developers.team100k.meteoritelandingapp.Adapter.MyAdapter;
 import com.developers.team100k.meteoritelandingapp.Entity.Meteorite;
 import com.developers.team100k.meteoritelandingapp.JobServices.MyJobService;
-import com.evernote.android.job.JobManager;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
 import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
@@ -44,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    eventBus = EventBus.getDefault();
     eventBus.register(this);
   }
 
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     });
 
     dataHandler = new DataHandler(this, URL, adapter, mListView, progress);
-    meteorites = dataHandler.getDataParser().getMeteorites();
+//    meteorites = dataHandler.getDataParser().getMeteorites();
 
     // job scheduler
     dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(MainActivity.this));
@@ -90,18 +87,23 @@ public class MainActivity extends AppCompatActivity {
         .setTrigger(Trigger.executionWindow(86400000,86400010))
         .build();
     dispatcher.mustSchedule(job);
+    
   }
 
   // eventbus onEvent listener
-  @Subscribe
+  @Subscribe(sticky = true)
   public void onEvent(String response){
     if (response.equals("download")){
       dataHandler.downloadRefresh();
-    } else {
-      if (response.equals("refresh")){
-        dataHandler.listRefresh();
-        progress.dismiss();
-      }
+    }
+    if (response.equals("refresh")){
+      meteorites = dataHandler.getDataParser().getMeteorites();
+      dataHandler.listRefresh();
+      progress.dismiss();
+    }
+    if (response.equals("")){
+      progress.dismiss();
+      Toast.makeText(MainActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
     }
   }
 
@@ -114,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == R.id.action_refresh){
+      if (!dataHandler.getDataParser().isOnline())
+        Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
       dataHandler.downloadRefresh();
     }
     return super.onOptionsItemSelected(item);

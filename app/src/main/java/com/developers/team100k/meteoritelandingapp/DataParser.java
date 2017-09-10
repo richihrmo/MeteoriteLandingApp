@@ -3,7 +3,9 @@ package com.developers.team100k.meteoritelandingapp;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.widget.Toast;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
@@ -21,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -33,18 +37,18 @@ import org.greenrobot.eventbus.EventBus;
 public class DataParser {
 
   private Context mContext;
-  private String URL;
+  private String url;
   private EventBus eventBus;
   private String json;
   private static String filename = "tempData";
   private List<Meteorite> meteorites;
+  private boolean online;
 
   public DataParser(Context context, String URL){
     this.mContext = context;
-    this.URL = URL;
+    this.url = URL;
     eventBus = EventBus.getDefault();
     json = readFile(mContext, filename);
-
   }
 
   /**
@@ -55,7 +59,7 @@ public class DataParser {
     Type type = new TypeToken<List<Meteorite>>(){}.getType();
     meteorites = new Gson().fromJson(json, type);
     Collections.sort(meteorites, new CustomComparator());
-    eventBus.post("refresh");
+    eventBus.postSticky("refresh");
   }
 
   /**
@@ -63,7 +67,7 @@ public class DataParser {
    */
   public void jsonFromURL(){
     RequestQueue queue = Volley.newRequestQueue(mContext);
-    StringRequest stringRequest = new StringRequest(URL, new Listener<String>() {
+    StringRequest stringRequest = new StringRequest(url, new Listener<String>() {
       @Override
       public void onResponse(String response) {
         json = response;
@@ -73,7 +77,7 @@ public class DataParser {
     }, new ErrorListener() {
       @Override
       public void onErrorResponse(VolleyError error) {
-        Toast.makeText(mContext, "Failed to connect", Toast.LENGTH_SHORT).show();
+        eventBus.post("");
       }
     });
     queue.add(stringRequest);
